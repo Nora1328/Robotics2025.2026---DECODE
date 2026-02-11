@@ -300,18 +300,18 @@ public abstract class Hardware extends LinearOpMode {
     public void shootOneBallWithEncoderBlueInside(){
         shooterWheel.setVelocity(-1350);
         shooterHand.setPosition(0);
-        sleep(3500); //3500
+        sleep(300); //3500
         shooterHand.setPosition(0.7);
-        sleep(130);
+        sleep(300);
         shooterHand.setPosition(0);
         sleep(500);
 
 
         shooterWheel.setVelocity(-1350);
         shooterHand.setPosition(0);
-        sleep(3500); //3500
+        sleep(300); //3500
         shooterHand.setPosition(0.7);
-        sleep(150);
+        sleep(300);
         shooterHand.setPosition(0);
         sleep(500);
     }
@@ -319,18 +319,18 @@ public abstract class Hardware extends LinearOpMode {
     public void shootOneBallWithEncoderRedOutside(){
         shooterWheel.setVelocity(-1310);
         shooterHand.setPosition(0);
-        sleep(3500); //3500
+        sleep(300); //3500
         shooterHand.setPosition(0.7);
-        sleep(130);
+        sleep(300);
         shooterHand.setPosition(0);
         sleep(500);
 
         //Second set of balls
         shooterWheel.setVelocity(-1310);
         shooterHand.setPosition(0);
-        sleep(3500); //3500
+        sleep(300); //3500
         shooterHand.setPosition(0.7);
-        sleep(150);
+        sleep(300);
         shooterHand.setPosition(0);
         sleep(500);
     }
@@ -341,7 +341,7 @@ public abstract class Hardware extends LinearOpMode {
         shooterHand.setPosition(0);
         sleep(3500);
         shooterHand.setPosition(0.7);
-        sleep(250);
+        sleep(300);
         shooterHand.setPosition(0);
         sleep(1000);
     }
@@ -349,9 +349,9 @@ public abstract class Hardware extends LinearOpMode {
     public void shootOneBallWithEncoderLastBlue(){
         shooterWheel.setVelocity(-1360);
         shooterHand.setPosition(0);
-        sleep(3500);
+        sleep(300);
         shooterHand.setPosition(0.7);
-        sleep(500);
+        sleep(300);
         shooterHand.setPosition(0);
         sleep(1000);
     }
