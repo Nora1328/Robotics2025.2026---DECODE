@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -29,8 +28,10 @@ public abstract class Hardware extends LinearOpMode {
     DcMotorEx frontRight;
     DcMotorEx backRight;
     DcMotorEx shooterWheel;
+    DcMotorEx leftAscend;
+    DcMotorEx rightAscend;
     Servo shooterHand;
-    //public DistanceSensor distanceSensor;
+    public DistanceSensor distanceSensor;
 
     public void initHardware() {
         // Initialize motors
@@ -40,6 +41,10 @@ public abstract class Hardware extends LinearOpMode {
         backRight = (DcMotorEx) hardwareMap.dcMotor.get("backRight");
         shooterWheel = (DcMotorEx) hardwareMap.dcMotor.get("shooterWheel");
         shooterHand = hardwareMap.get(Servo.class, "shooterHand");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "rangeFront");
+
+        leftAscend = (DcMotorEx) hardwareMap.dcMotor.get("leftAscend");
+        rightAscend = (DcMotorEx) hardwareMap.dcMotor.get("rightAscend");
 
         // Initialize BHI260AP sensor
         imu = hardwareMap.get(BHI260IMU.class, "imu");
@@ -49,6 +54,7 @@ public abstract class Hardware extends LinearOpMode {
         imu.initialize(parameters);
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        shooterWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
     }
@@ -173,7 +179,7 @@ public abstract class Hardware extends LinearOpMode {
 ////        telemetry.addData(name + ".getTargetPosition", targetPosition);
 //        String text =
 //                " position:" + armLeft.getCurrentPosition()
-////                + " target:" + armRight.getTargetPosition()
+    ////                + " target:" + armRight.getTargetPosition()
 //                        + " amp:" + armRight.getCurrent(CurrentUnit.AMPS) + ":" + armLeft.getCurrent(CurrentUnit.AMPS);
 //        //RobotLog.v(text);
 //        telemetry.addData("arm", text);
@@ -279,19 +285,86 @@ public abstract class Hardware extends LinearOpMode {
 
     public void shootOneBall() {
         shooterHand.setPosition(0.7);
-        sleep(150);
+        sleep(117);
         shooterHand.setPosition(0);
     }
 
-    public double getBatteryVoltage() {
-        double minVoltage = Double.POSITIVE_INFINITY;
-        for (VoltageSensor sensor : hardwareMap.voltageSensor) {
-            double voltage = sensor.getVoltage();
-            if (voltage > 0) {
-                minVoltage = Math.min(minVoltage, voltage);
-            }
-        }
-        return minVoltage;
+    public void shootOneBallLast() {
+        shooterHand.setPosition(0.7);
+        sleep(250);
+        shooterHand.setPosition(0);
+    }
+
+
+    //TODO: Check the values for the foot-down
+    public void shootOneBallWithEncoderBlueInside(){
+        shooterWheel.setVelocity(-1350);
+        shooterHand.setPosition(0);
+        sleep(3500); //3500
+        shooterHand.setPosition(0.7);
+        sleep(130);
+        shooterHand.setPosition(0);
+        sleep(500);
+
+
+        shooterWheel.setVelocity(-1350);
+        shooterHand.setPosition(0);
+        sleep(3500); //3500
+        shooterHand.setPosition(0.7);
+        sleep(150);
+        shooterHand.setPosition(0);
+        sleep(500);
+    }
+
+    public void shootOneBallWithEncoderRedOutside(){
+        shooterWheel.setVelocity(-1310);
+        shooterHand.setPosition(0);
+        sleep(3500); //3500
+        shooterHand.setPosition(0.7);
+        sleep(130);
+        shooterHand.setPosition(0);
+        sleep(500);
+
+        //Second set of balls
+        shooterWheel.setVelocity(-1310);
+        shooterHand.setPosition(0);
+        sleep(3500); //3500
+        shooterHand.setPosition(0.7);
+        sleep(150);
+        shooterHand.setPosition(0);
+        sleep(500);
+    }
+
+
+    public void changeMotifWithEncoder(){
+        shooterWheel.setVelocity(-800); //800
+        shooterHand.setPosition(0);
+        sleep(3500);
+        shooterHand.setPosition(0.7);
+        sleep(250);
+        shooterHand.setPosition(0);
+        sleep(1000);
+    }
+
+    public void shootOneBallWithEncoderLastBlue(){
+        shooterWheel.setVelocity(-1360);
+        shooterHand.setPosition(0);
+        sleep(3500);
+        shooterHand.setPosition(0.7);
+        sleep(500);
+        shooterHand.setPosition(0);
+        sleep(1000);
+    }
+
+
+    public void shootOneBallWithEncoderLastRed(){
+        shooterWheel.setVelocity(-1300);
+        shooterHand.setPosition(0);
+        sleep(300);
+        shooterHand.setPosition(0.7);
+        sleep(300);
+        shooterHand.setPosition(0);
+        sleep(1000);
     }
 
 }

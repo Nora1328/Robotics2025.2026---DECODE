@@ -35,6 +35,7 @@ public class FieldOrientedDriving extends Hardware {
         boolean previousX = false;
         boolean emergencyDrive = false; // activates arm motor control
         boolean previousY = false;
+        boolean previousA = false;
 
 
         while (opModeIsActive()) {
@@ -47,7 +48,7 @@ public class FieldOrientedDriving extends Hardware {
             previousX = x;
 
             //EMERGENCY DRIVE AND FIELD ORIENTED
-            if (emergencyDrive) {
+            if (emergencyDrive){
                 // Y stick is reversed
 
                 float y = -gamepad1.right_stick_y;
@@ -64,10 +65,10 @@ public class FieldOrientedDriving extends Hardware {
                 // if you want to make the power smaller, then make the '2' higher
                 // if you want it stronger make it lower or remove the division by two
                 double dividedBy = 2;
-                if (gamepad1.right_bumper) {
+                if (gamepad1.right_bumper){
                     dividedBy = 0.5;
-                } else if (gamepad1.left_bumper) {
-                    dividedBy = 4;
+                } else if (gamepad1.left_bumper){
+                    dividedBy = 6;
                 }
 
                 frontLeft.setPower((y + X + rx) / dividedBy);
@@ -150,16 +151,69 @@ public class FieldOrientedDriving extends Hardware {
             }
 
             // Activates shooter wheel
-            shooterWheel.setPower(gamepad2.left_stick_y);
+            //shooterWheel.setPower(gamepad2.left_stick_y);
 
+            if (gamepad2.left_stick_y < -0.5) {
+                shooterWheel.setVelocity(-1300); //TODO: CHANGE?
+            } else if (gamepad2.left_stick_y > 0.5) {
+                shooterWheel.setVelocity(-660);
+            } else {
+                shooterWheel.setVelocity(0);
+            }
+
+            // Shoots one ball when Y button is pressed
+            // Ensures action happens once per press (Even when the button is held down)
+            // Enforces a 1-second cooldown to prevent spamming <-- Removed
             boolean currentY = gamepad2.y;
-            if (currentY != previousY) {
+            if (currentY != previousY){
                 previousY = currentY;
-                if (currentY) {
+                if (currentY){
                     shootOneBall();
+                    //sleep(1000);
                 }
             }
 
+            boolean currentA = gamepad2.a;
+            if (currentA != previousA){
+                previousA = currentA;
+                if (currentA){
+                    shootOneBallLast();
+                    sleep(1000);
+                }
+            }
+
+            if(gamepad1.y){
+                leftAscend.setPower(-1.0);
+                rightAscend.setPower(-1.0);
+                telemetry.addLine("Ascending!");
+            } else if (gamepad1.b){
+                leftAscend.setPower(1.0);
+                rightAscend.setPower(1.0);
+                telemetry.addLine("Descending! WATCH OUT!");
+            } else if (gamepad1.a){
+                leftAscend.setPower(0.3);
+                rightAscend.setPower(0.3);
+                telemetry.addLine("Descending SLOWLY! WATCH OUT!");
+            } else {
+                leftAscend.setPower(0);
+                rightAscend.setPower(0);
+                telemetry.addLine("Not ascending or descending...");
+            }
+
+            telemetry.addData("wheel ticks", shooterWheel.getVelocity());
+            //1500 is max speed :)
+            telemetry.addData("distance", distanceSensor.getDistance(DistanceUnit.INCH));
+            getHeading();
+
+            double robotDistance = distanceSensor.getDistance(DistanceUnit.INCH);
+
+            if (robotDistance < 35 && robotDistance >= 33){
+                telemetry.addLine("GOOD");
+            } else if (robotDistance >= 35){
+                telemetry.addLine("MOVE CLOSER");
+            } else {
+                telemetry.addLine("MOVE FARTHER");
+            }
         }
     }
 }
