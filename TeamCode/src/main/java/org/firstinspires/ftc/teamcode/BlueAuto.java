@@ -13,12 +13,18 @@ public class BlueAuto extends Hardware {
         initHardware();
         stopMoving();
 
+        telemetry.addData("distance", distanceSensor.getDistance(DistanceUnit.INCH));
+        shooterHand.setPosition(0.0);  // UP position (blocks balls)
+        sleep(200);                    // Let servo settle
         waitForStart();
 
-        telemetry.addData("distance", distanceSensor.getDistance(DistanceUnit.INCH));
         shooterHand.setPosition(0);
         sleep(400);
 
+        // Now start flywheel warmup
+        double shooterVelocity = -1300;
+        shooterWheel.setVelocity(shooterVelocity);
+        sleep(1500);  // Flywheel spins up to stable speed
         while (distanceSensor.getDistance(DistanceUnit.INCH)<37){
             moveY(-0.3);
         }
@@ -30,21 +36,24 @@ public class BlueAuto extends Hardware {
 //        sleep(200);
 //        stopMoving();
 
-        shootOneBallWithEncoderBlueInside();
-        //shootOneBallWithEncoderBlueInside();
+        // NOW safe to open gate for first ball - function starts with hand UP
+        shootThreeBallsGateStyle();
 
         moveY(0.2);
         sleep(120);
         stopMoving();
         sleep(300);
 
-        shootOneBallWithEncoderLastRed();
 
         moveY(0.5);
         sleep(500);
 
         moveX(-0.5);
-        sleep(2000);
+        sleep(1500);
+
+        // Turn off flywheel when done
+        shooterWheel.setVelocity(0);
+        shooterHand.setPosition(0.5);  // UP position (blocks balls)
 
 
     }

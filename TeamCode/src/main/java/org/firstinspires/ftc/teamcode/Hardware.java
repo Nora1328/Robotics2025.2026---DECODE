@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -283,28 +284,48 @@ public abstract class Hardware extends LinearOpMode {
         backRight.setPower(0);
     }
 
+    public boolean shooting = false;
+    public boolean shootingLast = false;
+    public ElapsedTime shootTimer = new ElapsedTime();
+
     public void shootOneBall() {
-        shooterHand.setPosition(0.7);
-        sleep(117);
-        shooterHand.setPosition(0);
+        shooting = true;
+        shootTimer.reset();
     }
 
     public void shootOneBallLast() {
-        shooterHand.setPosition(0.7);
-        sleep(250);
-        shooterHand.setPosition(0);
+        shootingLast = true;
+        shootTimer.reset();
     }
 
 
     //TODO: Check the values for the foot-down
-    public void shootOneBallWithEncoderBlueInside(){
-        shooterWheel.setVelocity(-1350);
-        shooterHand.setPosition(0);
-        sleep(300); //3500
-        shooterHand.setPosition(0.7);
+    public void shootOneBallWithEncoderBlueInside() {
+        // first cycle
+        sleep(30);
+        shooterHand.setPosition(0);      // down
+        sleep(200);
+        shooterHand.setPosition(0.5);    // up
         sleep(300);
-        shooterHand.setPosition(0);
+
+        // second cycle
+        sleep(150);
+        shooterHand.setPosition(0);      // down
+        sleep(200);
+        shooterHand.setPosition(0.5);    // up
+        sleep(300);
+
+        // second cycle
+        sleep(150);
+        shooterHand.setPosition(0);      // down
+        sleep(200);
+        shooterHand.setPosition(0.5);    // up
+        sleep(300);
+
+        // final rest position (down) and a little extra wait
+        shooterHand.setPosition(0.5);
         sleep(500);
+
 
 
         shooterWheel.setVelocity(-1350);
@@ -366,5 +387,33 @@ public abstract class Hardware extends LinearOpMode {
         shooterHand.setPosition(0);
         sleep(1000);
     }
+
+    public void shootThreeBallsGateStyle() {
+        // Ensure starting position: hand UP (blocking balls)
+        shooterHand.setPosition(0);   // adjust if your "up" is a different value
+        sleep(200);                     // small settle time
+
+        // Tunable timings and positions
+        double upPos = 0.0;             // gate closed / up
+        double downPos = 0.5;           // gate open / down
+        long tapTimeMs = 120;           // how long gate is open for one ball
+        long betweenBallsMs = 1000;      // pause between balls
+
+        // Repeat 3 times: open briefly for exactly one ball, then close
+        for (int i = 0; i < 3; i++) {
+            // Open gate quickly for one ball
+            shooterHand.setPosition(downPos);
+            sleep(tapTimeMs);
+
+            // Close gate to block the next ball
+            shooterHand.setPosition(upPos);
+            sleep(betweenBallsMs);
+        }
+
+        // End with hand UP (blocking)
+        shooterHand.setPosition(upPos);
+        sleep(200);
+    }
+
 
 }

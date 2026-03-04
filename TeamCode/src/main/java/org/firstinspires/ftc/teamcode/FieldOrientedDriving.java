@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 public class FieldOrientedDriving extends Hardware {
     public static double powerCurve(double power, boolean slowSpeed) {
         if (slowSpeed)
-            return power / 8.0; // In slow speed move with 1/8 of the max power <- to make it slower, make denominator bigger/xfwri
+            return power / 8.0; // In slow speed move with 1/8 of the max power <- to make it slower, make denominator bigger/
         else
             return power / 3.0; // regular power
     }
@@ -154,7 +155,7 @@ public class FieldOrientedDriving extends Hardware {
             //shooterWheel.setPower(gamepad2.left_stick_y);
 
             if (gamepad2.left_stick_y < -0.5) {
-                shooterWheel.setVelocity(-1300); //TODO: CHANGE?
+                shooterWheel.setVelocity(-1500); //TODO: CHANGE?
             } else if (gamepad2.left_stick_y > 0.5) {
                 shooterWheel.setVelocity(-660);
             } else {
@@ -163,24 +164,38 @@ public class FieldOrientedDriving extends Hardware {
 
             // Shoots one ball when Y button is pressed
             // Ensures action happens once per press (Even when the button is held down)
-            // Enforces a 1-second cooldown to prevent spamming <-- Removed
             boolean currentY = gamepad2.y;
-            if (currentY != previousY){
-                previousY = currentY;
-                if (currentY){
-                    shootOneBall();
-                    //sleep(1000);
+            if (currentY && !previousY && !shooting) {
+                shootOneBall();
+            }
+            previousY = currentY;
+
+            boolean currentA = gamepad2.a;
+            if (currentA && !previousA && !shootingLast) {
+                shootOneBallLast();
+            }
+            previousA = currentA;
+
+            // Normal shot
+            if (shooting) {
+                if (shootTimer.milliseconds() < 117) {
+                    shooterHand.setPosition(0.7);
+                } else {
+                    shooterHand.setPosition(0);
+                    shooting = false;
                 }
             }
 
-            boolean currentA = gamepad2.a;
-            if (currentA != previousA){
-                previousA = currentA;
-                if (currentA){
-                    shootOneBallLast();
-                    sleep(1000);
+            // Last shot
+            if (shootingLast) {
+                if (shootTimer.milliseconds() < 1000) {
+                    shooterHand.setPosition(0.7);
+                } else {
+                    shooterHand.setPosition(0);
+                    shootingLast = false;
                 }
             }
+
 
             if(gamepad1.y){
                 leftAscend.setPower(-1.0);
